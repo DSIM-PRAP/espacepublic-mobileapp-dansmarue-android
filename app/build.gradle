@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
         classpath 'com.facebook.testing.screenshot:plugin:0.10.0'
-        classpath 'com.android.tools.build:gradle:7.4.2'
+        classpath 'com.android.tools.build:gradle:8.9.1'
     }
 }
 
@@ -26,8 +26,8 @@ apply plugin: 'jacoco'
 
 ext.versionMajor = 1
 ext.versionMinor = 4
-ext.versionPatch = 0
-ext.versionCode = 14
+ext.versionPatch = 2
+ext.versionCode = 16
 ext.minimumSdkVersion = 21
 
 android {
@@ -51,6 +51,14 @@ android {
         multiDexEnabled true
         vectorDrawables.useSupportLibrary = true
         resValue "string", "PATH_PICTURES", 'Android/data/' + applicationId + '/files/Pictures'
+    }
+
+    tasks.withType(JavaCompile).configureEach{
+        options.fork = true
+        options.forkOptions.jvmArgs +=[
+                '--add-exports=jdk.compiler/com.sun.tools.javac.tree=ALL-UNNAMED',
+                '--add-exports=jdk.compiler/com.sun.tools.javac.code=ALL-UNNAMED',
+                '--add-exports=jdk.compiler/com.sun.tools.javac.util=ALL-UNNAMED']
     }
 
     // Keep the following configuration in order to target Java 8.
@@ -287,8 +295,9 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "test") {
     group = "Reporting"
     description = "Generate Jacoco coverage reports after running tests."
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required = false
+        csv.required = false
+        html.required = true
     }
     classDirectories.from = fileTree(
             dir: './build/intermediates/classes/debug',
@@ -312,8 +321,9 @@ task jacocoTestReport(type: JacocoReport, dependsOn: "test") {
 
 task jacocoUnitTestReport(type: JacocoReport, dependsOn: "test") {
     reports {
-        xml.enabled = true
-        html.enabled = true
+        xml.required = false
+        csv.required = false
+        html.required = true
     }
 
     def fileFilter = ['/di/**', '**/*_*', '**/*$*', '/ui/activities/**', '**/R.class', '**/R$*.class', '**/BuildConfig.*', '**/Manifest*.*', '**/*Test*.*', 'android/**/*.*']
