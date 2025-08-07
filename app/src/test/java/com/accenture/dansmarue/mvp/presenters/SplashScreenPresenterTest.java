@@ -68,7 +68,7 @@ public class SplashScreenPresenterTest extends TestCase{
                 .toReturn(Schedulers.single());
         PowerMockito.stub(PowerMockito.method(Looper.class, "getMainLooper"))
                 .toReturn(null);
-        splashScreenPresenter = new SplashScreenPresenter(application,view,prefManager,service,siraApiServiceMock,apiServiceEquipement);
+        splashScreenPresenter = new SplashScreenPresenter(application,view,prefManager,service,siraApiServiceMock);
         Mockito.when(service.getCategories((CategoryRequest)Mockito.anyObject())).thenReturn(Single.just(new CategoryResponse()));
         Mockito.when(application.getApplicationContext()).thenReturn(context);
         Mockito.when(context.openFileOutput(Constants.FILE_CATEGORIES_JSON, Context.MODE_PRIVATE)).thenReturn(fos);

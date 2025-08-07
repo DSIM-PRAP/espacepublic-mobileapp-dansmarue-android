@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
         classpath 'com.facebook.testing.screenshot:plugin:0.10.0'
-        classpath 'com.android.tools.build:gradle:8.9.1'
+        classpath 'com.android.tools.build:gradle:8.11.1'
     }
 }
 
@@ -25,14 +25,14 @@ apply plugin: 'jacoco'
 
 
 ext.versionMajor = 1
-ext.versionMinor = 4
-ext.versionPatch = 2
-ext.versionCode = 16
+ext.versionMinor = 5
+ext.versionPatch = 0
+ext.versionCode = 17
 ext.minimumSdkVersion = 21
 
 android {
-    // target Android 14
-    compileSdkVersion 34
+    // target Android 15
+    compileSdkVersion 35
     // Build Tools
     //buildToolsVersion '30.0.3'
 
@@ -43,8 +43,8 @@ android {
     defaultConfig {
         applicationId "fr.pc.android.bienvu"
         minSdkVersion 21
-        // target Android 14
-        targetSdkVersion 34
+        // target Android 15
+        targetSdkVersion 35
         versionCode generateVersionCode()
         versionName generateVersionName()
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -145,17 +145,19 @@ android {
         debug {
             ext.betaDistributionGroupAliases = "dansmarue-android-acn"
             ext.betaDistributionReleaseNotes = releaseNotes
-            testCoverageEnabled = true
+            enableUnitTestCoverage true
+            enableAndroidTestCoverage true
         }
         release {
             ext.betaDistributionGroupAliases = "dansmarue-android-acn"
             ext.betaDistributionReleaseNotes = releaseNotes
 
             minifyEnabled false
-            testCoverageEnabled = false
 
             signingConfig signingConfigs.release
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            enableUnitTestCoverage false
+            enableAndroidTestCoverage false
         }
     }
 

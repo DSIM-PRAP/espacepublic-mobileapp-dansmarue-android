@@ -205,7 +205,7 @@ public class MiscTools {
         List<Address> addressesFilter = new ArrayList<>();
         List<String> cityPlaineCommune = Arrays.asList(cityList.toUpperCase().split(","));
         for (Address addresse :addresses) {
-            if(cityPlaineCommune.contains(addresse.getLocality().toUpperCase())){
+            if(addresse.getLocality() != null && cityPlaineCommune.contains(addresse.getLocality().toUpperCase())){
                 addressesFilter.add(addresse);
             }
         }
