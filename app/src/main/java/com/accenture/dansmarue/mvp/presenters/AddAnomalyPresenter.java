@@ -205,11 +205,16 @@ public class AddAnomalyPresenter extends BasePresenter<AddAnomalyView> implement
 
     @Override
     public void onSuccess(SaveIncidentResponse saveIncidentResponse) {
+        final String codeErrorBadPosition = "7";
+
         if (null != saveIncidentResponse && null != saveIncidentResponse.getAnswer() && (saveIncidentResponse.getAnswer().getStatus()).equals(Constants.STATUT_WS_OK)) {
             Log.i(TAG, "onSuccess: save incident");
             //let know the view about the creation
             view.onIncidentCreated(saveIncidentResponse.getAnswer().getIncidentId());
-        } else if (null != saveIncidentResponse && saveIncidentResponse.getErrorMessage() != null) {
+        } else if (null != saveIncidentResponse && codeErrorBadPosition.equals(saveIncidentResponse.getError())) {
+            Log.i(TAG, "onError: save incident bad position");
+            view.showDialogErrorBadPositionReport();
+        }else if (null != saveIncidentResponse && saveIncidentResponse.getErrorMessage() != null) {
             Log.i(TAG, "onError: save incident");
             view.showDialogErrorSaveDraft();
         } else {

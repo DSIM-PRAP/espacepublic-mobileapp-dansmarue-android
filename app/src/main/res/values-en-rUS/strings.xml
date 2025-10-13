@@ -17,6 +17,7 @@
     <string name="authorisation_gallery">Allow bienVU access to my library</string>
     <string name="authorisation_geoloc">Allow the geolocation</string>
     <string name="authorisation_mail">Receive notifications by mail</string>
+    <string name="error_bad_position">This address is not listed, the report cannot be validated. We invite you to select another address and provide details in the description field.</string>
     <string name="bottom_map_txt">Map</string>
     <string name="bottom_profile_txt">My space</string>
     <string name="btn_publier">Publish</string>

@@ -1034,6 +1034,21 @@ public class AddAnomalyActivity extends BaseAnomalyActivity implements AddAnomal
 
 
     @Override
+    public void showDialogErrorBadPositionReport() {
+        new AlertDialog.Builder(this).setMessage(R.string.error_bad_position)
+                .setCancelable(false)
+                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        if (null != greetingsDialogSendIncident) {
+                            greetingsDialogSendIncident.dismiss();
+                        }
+                        dialog.dismiss();
+                    }
+                }).show();
+    }
+
+    @Override
     public void showDialogErrorSaveDraft() {
         new AlertDialog.Builder(this).setMessage(R.string.save_anomaly_failure)
                 .setCancelable(false)

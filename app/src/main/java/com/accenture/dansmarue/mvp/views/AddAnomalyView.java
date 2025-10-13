@@ -11,6 +11,8 @@ public interface AddAnomalyView extends BaseView {
 
     void showGreetingsDialog(final boolean askEmail);
 
+    void showDialogErrorBadPositionReport();
+
     void showDialogErrorSaveDraft();
 
     void showIncidentAndPhotosOkThankYou(boolean smile);

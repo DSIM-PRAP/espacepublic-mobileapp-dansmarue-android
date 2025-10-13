@@ -17,6 +17,7 @@
     <string name="information">Information</string>
     <string name="dmr_offline">L\'application bienVU est actuellement en maintenance.\n\nMerci d\'essayer ultérieurement.</string>
     <string name="dmr_offline_publish">L\'application bienVU est actuellement en maintenance.\n\nUn brouillon a été sauvegardé dans votre espace.\n\nMerci d\'essayer ultérieurement.</string>
+    <string name="error_bad_position">Cette adresse n\'est pas référencée, le signalement ne peut être validé. \n\nNous vous invitons à sélectionner une autre adresse et donner des précisions dans le champ descriptif.</string>
 
 
     <!-- Bottom Bar Wordin -->
