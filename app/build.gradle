@@ -7,7 +7,7 @@ buildscript {
     dependencies {
         classpath 'org.greenrobot:greendao-gradle-plugin:3.2.1'
         classpath 'com.facebook.testing.screenshot:plugin:0.10.0'
-        classpath 'com.android.tools.build:gradle:8.11.1'
+        classpath 'com.android.tools.build:gradle:8.11.2'
     }
 }
 
@@ -26,8 +26,8 @@ apply plugin: 'jacoco'
 
 ext.versionMajor = 1
 ext.versionMinor = 5
-ext.versionPatch = 0
-ext.versionCode = 17
+ext.versionPatch = 1
+ext.versionCode = 18
 ext.minimumSdkVersion = 21
 
 android {
