@@ -12,6 +12,8 @@ import com.accenture.dansmarue.services.SiraHttpResponseInterceptor;
 import com.accenture.dansmarue.utils.PrefManager;
 
 import java.security.KeyManagementException;
+import java.security.KeyStore;
+import java.security.KeyStoreException;
 import java.security.NoSuchAlgorithmException;
 import java.util.concurrent.TimeUnit;
 
@@ -20,6 +22,7 @@ import javax.inject.Singleton;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.TrustManagerFactory;
 import javax.net.ssl.X509TrustManager;
 
 import dagger.Module;
@@ -81,24 +84,21 @@ public class ApplicationModule {
     @Singleton
     @Provides
     X509TrustManager provideTrustManager() {
-        return new X509TrustManager() {
-            @Override
-            public void checkClientTrusted(
-                    java.security.cert.X509Certificate[] chain,
-                    String authType) {
-            }
 
-            @Override
-            public void checkServerTrusted(
-                    java.security.cert.X509Certificate[] chain,
-                    String authType) {
-            }
+        try{
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
+            tmf.init((KeyStore) null); // Utilisation de keystrore par defaut Android
 
-            @Override
-            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                return new java.security.cert.X509Certificate[0];
+            TrustManager[] trustManagers = tmf.getTrustManagers();
+            for(TrustManager tm : trustManagers) {
+                if (tm instanceof X509TrustManager) {
+                    return (X509TrustManager) tm;
+                }
             }
-        };
+            throw new IllegalStateException("No X509TrustManager found");
+        } catch (NoSuchAlgorithmException | KeyStoreException e) {
+            throw new RuntimeException("Failed to get default X509TrustManager", e);
+        }
     }
 
 
