@@ -176,7 +176,9 @@ public class AnomalyDetailsPresenter extends BasePresenter implements SingleObse
 
                 }
 
-                incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
+                if (CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory) != null) {
+                    incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
+                }
 
                 view.populateFields(incident);
 

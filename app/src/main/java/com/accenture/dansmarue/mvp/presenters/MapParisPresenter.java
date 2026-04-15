@@ -140,34 +140,34 @@ public class MapParisPresenter extends BasePresenter<MapParisView> implements Si
                         incident.setCategoryId(CategoryHelper.ID_CATEGORIE_RAMEN);
                     }
                     final String idParentCategory = CategoryHelper.getFirstParent(incident.getCategoryId(), CategoryHelper.getAllCategories(application));
-                    if (CategoryHelper.CAT_ICONS.get(idParentCategory) != null) {
-                        if (incident.isResolu()) {
-                            incident.setIconIncidentSignalement(CategoryHelper.MAP_ICONS_RESOLVED.get(idParentCategory));
-                        } else {
-                            incident.setIconIncidentSignalement(CategoryHelper.MAP_ICONS.get(idParentCategory));
 
-                            anomalyList.add(incident);
-                        }
-
-                        incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
-
-                        // anchor : centre de l'image = position gps
-                        MarkerOptions markerOpt = new MarkerOptions()
-                                .position(newLatLng)
-                                .anchor(0.5f,0.5f)
-                                .snippet(incident.toJson())
-                                .icon(BitmapDescriptorFactory.fromResource(incident.getIconIncidentSignalement()));
-
-                        if ( view.getFindByNumberValue() != null && incident.getReference().equals( view.getFindByNumberValue())) {
-                            //if it's a search by number display only the reporting search  DMR-2146
-                            markers.add(markerOpt);
-                        } else if ( view.getFindByNumberValue() == null || view.getFindByNumberValue().trim().length() == 0) {
-                            markers.add(markerOpt);
-                        }
-
-
-
+                    String iconToUse  = "default";
+                    if(CategoryHelper.CAT_ICONS.get(idParentCategory) != null) {
+                      iconToUse = idParentCategory;
+                      incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
                     }
+
+                    if (incident.isResolu()) {
+                        incident.setIconIncidentSignalement(CategoryHelper.MAP_ICONS_RESOLVED.get(iconToUse));
+                    } else {
+                        incident.setIconIncidentSignalement(CategoryHelper.MAP_ICONS.get(iconToUse));
+                        anomalyList.add(incident);
+                    }
+
+                    // anchor : centre de l'image = position gps
+                    MarkerOptions markerOpt = new MarkerOptions()
+                            .position(newLatLng)
+                            .anchor(0.5f, 0.5f)
+                            .snippet(incident.toJson())
+                            .icon(BitmapDescriptorFactory.fromResource(incident.getIconIncidentSignalement()));
+
+                    if (view.getFindByNumberValue() != null && incident.getReference().equals(view.getFindByNumberValue())) {
+                        //if it's a search by number display only the reporting search  DMR-2146
+                        markers.add(markerOpt);
+                    } else if (view.getFindByNumberValue() == null || view.getFindByNumberValue().trim().length() == 0) {
+                        markers.add(markerOpt);
+                    }
+
                 }
                 view.updateAnomalyMarkers(markers);
 

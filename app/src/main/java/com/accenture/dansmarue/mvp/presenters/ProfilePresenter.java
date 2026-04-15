@@ -312,10 +312,12 @@ public class ProfilePresenter extends BasePresenter<ProfileView> implements Sing
 
                         final String idParentCategory = CategoryHelper.getFirstParent(incident.getCategoryId(), CategoryHelper.getAllCategories(application));
 
-                        if (incident.isResolu()) {
-                            incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
-                        } else {
-                            incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
+                        if(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory) != null) {
+                            if (incident.isResolu()) {
+                                incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
+                            } else {
+                                incident.getPictures().setGenericPictureId(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
+                            }
                         }
 
                         Log.i(TAG, "outdoor");

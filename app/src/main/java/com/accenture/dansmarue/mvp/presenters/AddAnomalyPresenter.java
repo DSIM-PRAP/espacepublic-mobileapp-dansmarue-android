@@ -89,7 +89,9 @@ public class AddAnomalyPresenter extends BasePresenter<AddAnomalyView> implement
             final String idParentCategory = CategoryHelper.getFirstParent(getRequest().getIncident().getCategoryId(), CategoryHelper.getAllCategories(application));
 
 
-            getRequest().getIncident().setIconIncidentSignalement(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
+            if(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory) != null) {
+                getRequest().getIncident().setIconIncidentSignalement(CategoryHelper.MAP_GENERIC_PICTURES.get(idParentCategory));
+            }
         }
 
     }

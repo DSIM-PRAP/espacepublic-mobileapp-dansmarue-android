@@ -76,6 +76,7 @@ public final class CategoryHelper {
         //MAP_ICONS.put("12005", R.drawable.ano_12005);
         //MAP_ICONS.put("12000", R.drawable.ano_12005);
         //MAP_ICONS.put("12008", R.drawable.ic_ano_12008);
+        MAP_ICONS.put("default", R.drawable.ic_ano_default);
 
         //MAP_ICONS_RESOLVED.put(ID_CATEGORIE_RAMEN, R.drawable.ic_ano_done_1000);
         MAP_ICONS_RESOLVED.put("12159", R.drawable.ic_ano_done_1000);
@@ -94,6 +95,8 @@ public final class CategoryHelper {
         //MAP_ICONS_RESOLVED.put("12005", R.drawable.ano_done_12005);
         //MAP_ICONS_RESOLVED.put("12000", R.drawable.ano_done_12005);
         //MAP_ICONS_RESOLVED.put("12008", R.drawable.ic_ano_done_12008);
+        MAP_ICONS_RESOLVED.put("default", R.drawable.ic_ano_done_default);
+
 
         MAP_GENERIC_PICTURES.put(ID_CATEGORIE_RAMEN, R.drawable.ic_type_svg_obj_lost_1000_grey);
         MAP_GENERIC_PICTURES.put("12159", R.drawable.ic_type_svg_obj_lost_1000_grey);
