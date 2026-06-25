@@ -10,9 +10,11 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ImageDecoder;
 import android.graphics.drawable.ColorDrawable;
 import android.location.Address;
 import android.location.Geocoder;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.MediaStore;
@@ -31,6 +33,9 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -377,6 +382,9 @@ public class AddAnomalyActivity extends BaseAnomalyActivity implements AddAnomal
     // A place has been received; use requestCode to track the request.
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+
+        super.onActivityResult(requestCode, resultCode, data);
+
         switch (requestCode) {
             case PLACE_AUTOCOMPLETE_REQUEST_CODE:
                 if (resultCode == RESULT_OK) {
@@ -437,11 +445,6 @@ public class AddAnomalyActivity extends BaseAnomalyActivity implements AddAnomal
                 if (resultCode == RESULT_OK) {
                     rotateResizeAndCompress();
                     showPicture(mCurrentPhotoPath);
-                }
-                break;
-            case CHOOSE_FROM_GALLERY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    onSelectFromGalleryResult(data);
                 }
                 break;
             case LOGIN_REQUEST_CODE:
@@ -555,24 +558,6 @@ public class AddAnomalyActivity extends BaseAnomalyActivity implements AddAnomal
     private void onCaptureImageResult(final Intent data) {
         final Bitmap thumbnail = (Bitmap) data.getExtras().get("data");
         addPictureToPlaceHolder(thumbnail);
-    }
-
-    /**
-     * Callback after CHOOSE_FROM_GALLERY_REQUEST_CODE
-     *
-     * @param data intent containig the picture choosen
-     */
-    private void onSelectFromGalleryResult(final Intent data) {
-        if (data != null) {
-            try {
-                Bitmap thumbnail = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
-                addPictureToPlaceHolder(thumbnail);
-            } catch (IOException e) {
-                FirebaseCrashlytics.getInstance().log(e.getMessage());
-                Log.e(TAG, e.getMessage(), e);
-            }
-        }
-
     }
 
     /**
@@ -1260,6 +1245,27 @@ public class AddAnomalyActivity extends BaseAnomalyActivity implements AddAnomal
             layoutCommentAgent.setVisibility(LinearLayout.GONE);
         }
     }
+
+
+    @Override
+    protected void onPhotoPicked(Uri uri) {
+        if (uri != null) {
+            try {
+                Bitmap bitmap;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    bitmap = ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(getContentResolver(), uri)
+                    );
+                } else {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                }
+                addPictureToPlaceHolder(bitmap);
+            } catch (IOException e) {
+                Log.e(TAG, "Erreur lecture image", e);
+            }
+        }
+    }
+
 
     @Override
     public void navigateBack() {

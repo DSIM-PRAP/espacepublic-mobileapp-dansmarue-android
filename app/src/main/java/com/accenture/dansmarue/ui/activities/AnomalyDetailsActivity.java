@@ -8,12 +8,16 @@ import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
+import android.graphics.ImageDecoder;
 import android.graphics.drawable.ColorDrawable;
 
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
@@ -323,27 +327,6 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
     }
 
 
-    //@OnClick(R.id.fab_details_ano)
-    /**public void fabClicked() {
-        //Should always be true
-        if (incident != null) {
-
-            if (incident.isResolu()) {
-                congratulate();
-            } else {
-
-                if (!incident.isIncidentFollowedByUser()) {
-                    anomalyDetailsPresenter.followAnomaly(String.valueOf(incident.getId()));
-                } else {
-                    anomalyDetailsPresenter.unfollowAnomaly(String.valueOf(incident.getId()));
-                }
-
-            }
-        }
-
-    }**/
-
-
     /**
      * On display fallow success
      */
@@ -440,13 +423,6 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
                 txtOverPicture.setText(R.string.anomaly_resolved_toast);
                 txtOverPicture.setVisibility(View.VISIBLE);
 
-                /**if (incident.isFromRamen()) {
-                    fabDetailsAno.setImageResource(R.drawable.ic_greetings_grey);
-                    fabDetailsAno.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(), R.color.greetings_grey)));
-                } else {
-                    fabDetailsAno.setImageResource(R.drawable.ic_greetings_white);
-                    fabDetailsAno.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(), R.color.greetings_green)));
-                }**/
 
                 //isAgentLayout and isResolve
                 if(isLayoutAgent) {
@@ -510,9 +486,6 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
     private void congratulate() {
         if (!congratulated) {
 
-            //fabDetailsAno.setImageResource(R.drawable.ic_greetings_grey);
-            //fabDetailsAno.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(), R.color.greetings_grey)));
-
             Snackbar.make(findViewById(R.id.anomaly_line2), R.string.greetings_ok, Snackbar.LENGTH_LONG)
                     .addCallback(new Snackbar.Callback() {
                         @Override
@@ -527,10 +500,7 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
                     })
                     .setAction(R.string.greetings_undo, new View.OnClickListener() {
                         @Override
-                        public void onClick(View view) {
-                           // fabDetailsAno.setImageResource(R.drawable.ic_greetings_white);
-                           // fabDetailsAno.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(), R.color.greetings_green)));
-                        }
+                        public void onClick(View view) {}
                     })
                     .show();
         }
@@ -576,7 +546,6 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
 
         nbGreetingsDisplay++;
         nbGreetings.setText(nbGreetingsDisplay+" ");
-        //fabDetailsAno.setVisibility(View.INVISIBLE);
 
     }
 
@@ -584,8 +553,6 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
     public void displayGreetingsKo() {
         Snackbar.make(findViewById(R.id.navigation), R.string.dmr_error, Snackbar.LENGTH_LONG).show();
         congratulated = false;
-        //fabDetailsAno.setImageResource(R.drawable.ic_greetings_green);
-        //fabDetailsAno.setBackgroundTintList(ColorStateList.valueOf(ContextCompat.getColor(getApplicationContext(), R.color.white)));
     }
 
     @Override
@@ -805,11 +772,6 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
                     }
                 }
                 break;
-            case CHOOSE_FROM_GALLERY_REQUEST_CODE:
-                if (resultCode == RESULT_OK) {
-                    onSelectFromGalleryResult(data, isRequalificationPhoto);
-                }
-                break;
             case CHOOSE_TYPE_REQUEST_CODE:
                 onTypeResult(resultCode, data);
                 break;
@@ -857,18 +819,6 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
         requalificationImageChoiceClose.setVisibility(View.VISIBLE);
     }
 
-    private void onSelectFromGalleryResult(final Intent data, final boolean isForRequalification) {
-        if (data != null) {
-            try {
-                Bitmap thumbnail = MediaStore.Images.Media.getBitmap(getApplicationContext().getContentResolver(), data.getData());
-                addPictureToPlaceHolder(thumbnail, isForRequalification);
-            } catch (IOException e) {
-                FirebaseCrashlytics.getInstance().log(e.getMessage());
-                Log.e(TAG, e.getMessage(), e);
-            }
-        }
-
-    }
 
     private void onTypeResult(int resultCode, Intent data) {
         if (resultCode == RESULT_OK) {
@@ -977,6 +927,24 @@ public class AnomalyDetailsActivity extends BaseAnomalyActivity implements Anoma
             bePatientDialog.show();
         }
 
+    }
+
+    protected void onPhotoPicked(Uri uri) {
+        if (uri != null) {
+            try {
+                Bitmap bitmap;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) {
+                    bitmap = ImageDecoder.decodeBitmap(
+                            ImageDecoder.createSource(getContentResolver(), uri)
+                    );
+                } else {
+                    bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                }
+                addPictureToPlaceHolder(bitmap,isRequalificationPhoto);
+            } catch (IOException e) {
+                Log.e(TAG, "Erreur lecture image", e);
+            }
+        }
     }
 
 }

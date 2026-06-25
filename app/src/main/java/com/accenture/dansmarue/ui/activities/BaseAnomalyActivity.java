@@ -6,9 +6,15 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.net.Uri;
+import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.util.Log;
 
+
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.PickVisualMediaRequest;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.core.app.ActivityCompat;
@@ -42,6 +48,27 @@ public abstract class BaseAnomalyActivity extends BaseActivity {
 
     protected abstract int getContentView();
 
+    protected ActivityResultLauncher<PickVisualMediaRequest> pickMediaLauncher;
+
+
+    @Override
+    protected void  onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+
+
+        pickMediaLauncher = registerForActivityResult(
+                new ActivityResultContracts.PickVisualMedia(),
+                uri -> onPhotoPicked(uri)
+        );
+
+    }
+
+
+    protected void onPhotoPicked(Uri uri) {
+        // à override dans l'activité fille si besoin
+    }
+
+
     /**
      * Display choice modal dialog to add photo to incident.
      */
@@ -60,15 +87,7 @@ public abstract class BaseAnomalyActivity extends BaseActivity {
                     }
                     dialog.dismiss();
                 } else if (getResources().getString(R.string.choose_photo_in_gallery).equals(items[which])) {
-                    if (android.os.Build.VERSION.SDK_INT > 32) {
-                        galleryIntent();
-                    } else {
-                        if (checkMediaPermission()) {
-                            galleryIntent();
-                        } else {
-                            requestMediaPermission();
-                        }
-                    }
+                    galleryIntent();
                     dialog.dismiss();
                 } else {
                     dialog.dismiss();
@@ -85,16 +104,6 @@ public abstract class BaseAnomalyActivity extends BaseActivity {
 
     private void requestCameraPermission() {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.CAMERA}, CAMERA_PERMISSION_REQUEST_CODE);
-    }
-
-    private boolean checkMediaPermission() {
-        int resultWrite = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        int resultRead = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
-        return resultWrite == PackageManager.PERMISSION_GRANTED || resultRead == PackageManager.PERMISSION_GRANTED;
-    }
-
-    private void requestMediaPermission() {
-        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, READ_EXTERNAL_STORAGE_REQUEST_CODE);
     }
 
     @Override
@@ -140,14 +149,19 @@ public abstract class BaseAnomalyActivity extends BaseActivity {
         }
     }
 
+
     /**
      * Start activity Gallery on device.
      */
     private void galleryIntent() {
-        final Intent intent = new Intent();
-        intent.setType("image/*");
-        intent.setAction(Intent.ACTION_GET_CONTENT);
-        startActivityForResult(Intent.createChooser(intent, getResources().getString(R.string.select_photo)), CHOOSE_FROM_GALLERY_REQUEST_CODE);
+        if(pickMediaLauncher != null) {
+            pickMediaLauncher.launch(
+                    new PickVisualMediaRequest.Builder()
+                            .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly.INSTANCE)
+                            .build()
+            );
+        }
+
     }
 
 
